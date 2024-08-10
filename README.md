@@ -103,8 +103,7 @@ function BoxESP.Create(Player)
         HealthBar.Filled = true
         HealthBar.Thickness = 1
 
-        local Connection
-        Connection = RunService.RenderStepped:Connect(function()
+        local function updateHealthBar()
             if character and character:IsDescendantOf(workspace) and character:FindFirstChild("Humanoid") and character.Humanoid.Health > 0 then
                 local Pos, Visible = workspace.CurrentCamera:WorldToViewportPoint(character.HumanoidRootPart.Position)
                 local scale_factor = 1 / (Pos.Z * math.tan(math.rad(workspace.CurrentCamera.FieldOfView * 0.5)) * 2) * 100
@@ -137,8 +136,14 @@ function BoxESP.Create(Player)
                 Box:Destroy()
                 HealthBarBackground:Destroy()
                 HealthBar:Destroy()
-                Connection:Disconnect()
                 BoxESP[Player] = nil
+            end
+        end
+
+        local Connection
+        Connection = RunService.RenderStepped:Connect(function()
+            if math.random() < 0.5 then  -- Randomly skip frames to avoid detection
+                updateHealthBar()
             end
         end)
 
